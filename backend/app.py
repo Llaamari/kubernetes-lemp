@@ -67,5 +67,18 @@ def add_user():
 
     return jsonify({"message": "User added"})
 
+@app.route("/api/delete-users", methods=["DELETE"])
+def delete_users():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM users")
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"message": "All users deleted"})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
