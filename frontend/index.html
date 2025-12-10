@@ -16,6 +16,11 @@
 
     <pre id="out"></pre>
 
+<h3>Add new user</h3>
+<input id="name" placeholder="Name">
+<input id="email" placeholder="Email">
+<button onclick="addUser()">Add User</button>
+
 <script>
 const out = document.getElementById("out");
 
@@ -36,6 +41,20 @@ async function users() {
     await (await fetch("api/users")).json(), null, 2
   );
 }
+
+async function addUser() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+
+  const response = await fetch("api/add-user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email })
+  });
+
+  out.textContent = JSON.stringify(await response.json(), null, 2);
+}
+
 </script>
 </body>
 </html>

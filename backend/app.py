@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import mysql.connector
 import os
 
@@ -46,6 +46,26 @@ def users():
     cursor.close()
     conn.close()
     return jsonify(rows)
+
+@app.route("/api/add-user", methods=["POST"])
+def add_user():
+    data = request.json
+    name = data.get("name")
+    email = data.get("email")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO users (name, email) VALUES (%s, %s)",
+        (name, email)
+    )
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({"message": "User added"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
