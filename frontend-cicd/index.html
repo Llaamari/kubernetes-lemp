@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kubernetes LEMP Stack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/cicd/">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>LEMP Stack Kubernetesissa</h1>
+    <p>Frontend: Nginx | Backend: Flask | Database: MySQL</p>
+
+    <button onclick="health()">Health</button>
+    <button onclick="initDb()">Init DB</button>
+    <button onclick="users()">Get Users</button>
+    <button onclick="deleteUsers()">Delete all users</button>
+
+    <pre id="out"></pre>
+
+<h3>Add new user</h3>
+<input id="name" placeholder="Name">
+<input id="email" placeholder="Email"><br>
+<button onclick="addUser()">Add User</button>
+
+<script>
+const out = document.getElementById("out");
+
+async function health() {
+  out.textContent = JSON.stringify(
+    await (await fetch("api/health")).json(), null, 2
+  );
+}
+
+async function initDb() {
+  out.textContent = JSON.stringify(
+    await (await fetch("api/init-db")).json(), null, 2
+  );
+}
+
+async function users() {
+  out.textContent = JSON.stringify(
+    await (await fetch("api/users")).json(), null, 2
+  );
+}
+
+async function addUser() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+
+  const response = await fetch("api/add-user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email })
+  });
+
+  out.textContent = JSON.stringify(await response.json(), null, 2);
+}
+
+async function deleteUsers() {
+  const response = await fetch("api/delete-users", {
+    method: "DELETE"
+  });
+
+  out.textContent = JSON.stringify(await response.json(), null, 2);
+}
+
+</script>
+</body>
+</html>

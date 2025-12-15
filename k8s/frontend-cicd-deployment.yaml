@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-cicd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-cicd
+  template:
+    metadata:
+      labels:
+        app: frontend-cicd
+    spec:
+      containers:
+      - name: frontend-cicd
+        image: frontend-cicd:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-cicd
+spec:
+  selector:
+    app: frontend-cicd
+  ports:
+  - port: 80
+    targetPort: 80
+  type: NodePort
