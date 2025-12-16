@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-cicd
+  template:
+    metadata:
+      labels:
+        app: backend-cicd
+    spec:
+      containers:
+        - name: backend-cicd
+          image: backend-cicd:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_NAME
+              value: appdb
+            - name: DB_USER
+              value: appuser
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-cicd
+spec:
+  selector:
+    app: backend-cicd
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP
