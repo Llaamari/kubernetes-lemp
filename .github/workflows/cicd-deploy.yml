@@ -1,4 +1,4 @@
-name: CI Frontend CICD
+name: CI/CD Frontend CICD
 
 on:
   push:
@@ -6,36 +6,18 @@ on:
       - main
 
 jobs:
-  test:
-    name: Smoke tests
-    runs-on: [self-hosted, linux]
+  deploy:
+    runs-on: [self-hosted, vps, kubernetes]
 
     steps:
-      - name: Test frontend page
-        run: |
-          curl -f http://127.0.0.1/cicd/ || exit 1
-
-      - name: Test CSS is accessible
-        run: |
-          curl -f http://127.0.0.1/cicd/style.css || exit 1
-
-      - name: Test backend health (optional)
-        run: |
-          curl -f http://127.0.0.1/cicd/api/health || exit 1
-
-  build:
-    name: Build frontend image
-    needs: test
-    runs-on: [self-hosted, linux]
-
-    steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Build frontend-cicd Docker image
+      - name: Build frontend-cicd image
         run: |
-          docker build -t frontend-cicd:ci ./frontend-cicd
+          docker build -t frontend-cicd:latest ./frontend-cicd
 
-      - name: Verify image
+      - name: Deploy to Kubernetes
         run: |
-          docker images | grep frontend-cicd
+          kubectl apply -f k8s/frontend-cicd-deployment.yaml
+          kubectl rollout status deployment/frontend-cicd
