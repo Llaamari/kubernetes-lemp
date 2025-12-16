@@ -1,4 +1,4 @@
-name: CI Frontend CICD
+name: CI/CD Frontend CICD
 
 on:
   push:
@@ -6,13 +6,18 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: [self-hosted, vps, kubernetes]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Build frontend-cicd Docker image
+      - name: Build frontend-cicd image
         run: |
           docker build -t frontend-cicd:latest ./frontend-cicd
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/frontend-cicd-deployment.yaml
+          kubectl rollout status deployment/frontend-cicd
