@@ -2,7 +2,20 @@
 *.env
 __pycache__/
 *.pyc
+
 .DS_Store
 .idea/
 .vscode/
+
+# Kubernetes / local
+.minikube/
+.kube/
+
+# Secrets
 k8s/mysql/mysql-secret.yaml
+
+# Logs
+*.log
+
+# GitHub Actions self-hosted runner
+actions-runner/
